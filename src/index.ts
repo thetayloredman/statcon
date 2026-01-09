@@ -5,7 +5,9 @@ export * from "./structures/index.js";
  * Converts a camelCase string to kebab-case
  */
 function toKebabCase(str: string): string {
-    return str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+    return str.replace(/[A-Z]/g, (letter, index) => {
+        return index === 0 ? letter.toLowerCase() : `-${letter.toLowerCase()}`;
+    });
 }
 
 /**
@@ -23,7 +25,7 @@ function convertKeysToKebabCase(obj: any): any {
     if (typeof obj === "object" && obj.constructor === Object) {
         const newObj: Record<string, any> = {};
         for (const key in obj) {
-            if (obj.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
                 const kebabKey = toKebabCase(key);
                 newObj[kebabKey] = convertKeysToKebabCase(obj[key]);
             }
