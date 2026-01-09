@@ -5,9 +5,10 @@ export * from "./structures/index.js";
  * Converts a camelCase string to kebab-case
  */
 function toKebabCase(str: string): string {
-    return str.replace(/[A-Z]/g, (letter, index) => {
-        return index === 0 ? letter.toLowerCase() : `-${letter.toLowerCase()}`;
-    });
+    return str
+        .replace(/[A-Z]/g, (letter, offset) => {
+            return offset === 0 ? letter.toLowerCase() : `-${letter.toLowerCase()}`;
+        });
 }
 
 /**
