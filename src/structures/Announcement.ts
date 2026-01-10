@@ -1,7 +1,7 @@
 import { Base, Serialize } from "./Base.js";
 
 export type AnnouncementConfiguration = {
-    timestamp?: number;
+    timestamp?: string;
     type?: "outage" | "warning" | "information" | "operational" | "none";
     message?: string;
     archived?: boolean;
@@ -24,6 +24,11 @@ export class Announcement extends Base implements Serialize {
 
     archived(archived: boolean): this {
         this.data.archived = archived;
+        return this;
+    }
+
+    timestamp(timestamp: string): this {
+        this.data.timestamp = timestamp;
         return this;
     }
 

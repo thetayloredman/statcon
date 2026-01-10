@@ -25,7 +25,7 @@ export type ConfigurationConfiguration = {
     skipInvalidConfigUpdate?: boolean;
     web?: Web;
     ui?: UI;
-    maintenance?: Maintenance[];
+    maintenance?: Maintenance;
     tunneling?: Record<string, Tunnel>;
 };
 
@@ -177,10 +177,7 @@ export class Configuration extends Base implements Serialize {
             if (maintenance)
                 maintenanceInstance = maintenance(maintenanceInstance);
         }
-        if (!this.data.maintenance) {
-            this.data.maintenance = [];
-        }
-        this.data.maintenance.push(maintenanceInstance);
+        this.data.maintenance = maintenanceInstance;
         return this;
     }
 
@@ -285,9 +282,7 @@ export class Configuration extends Base implements Serialize {
         }
 
         if (this.data.maintenance) {
-            output.maintenance = this.data.maintenance.map((maintenance) =>
-                maintenance.serialize()
-            );
+            output.maintenance = this.data.maintenance.serialize();
         }
 
         if (this.data.tunneling) {

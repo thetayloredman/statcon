@@ -22,6 +22,7 @@ function convertKeysToKebabCase(obj: any): any {
         return obj.map((item) => convertKeysToKebabCase(item));
     }
 
+    // FIXME: In cases like `headers`, we want to preserve the case of the keys.
     if (typeof obj === "object" && obj.constructor === Object) {
         const newObj: Record<string, any> = {};
         for (const key in obj) {
