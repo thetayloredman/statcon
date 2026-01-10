@@ -1,6 +1,6 @@
 import { Base, Serialize } from "./Base.js";
 
-export type AlertingConfiguration = {
+export type EndpointAlertingConfiguration = {
     type?: string;
     enabled?: boolean;
     failureThreshold?: number;
@@ -9,11 +9,11 @@ export type AlertingConfiguration = {
     sendOnResolved?: boolean;
     description?: string;
     [additional: string]: any;
-    providerOverride?: Partial<AlertingConfiguration>;
+    providerOverride?: Partial<EndpointAlertingConfiguration>;
 };
 
 export class Alerting extends Base implements Serialize {
-    constructor(public data: AlertingConfiguration) {
+    constructor(public data: EndpointAlertingConfiguration) {
         super();
     }
 
@@ -57,7 +57,7 @@ export class Alerting extends Base implements Serialize {
         return this;
     }
 
-    providerOverride(override: Partial<AlertingConfiguration>): this {
+    providerOverride(override: Partial<EndpointAlertingConfiguration>): this {
         this.data.providerOverride = override;
         return this;
     }

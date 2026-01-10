@@ -1,4 +1,4 @@
-import { Alerting, AlertingConfiguration } from "./Alerting.js";
+import { Alerting, EndpointAlertingConfiguration } from "./Alerting.js";
 import { Announcement, AnnouncementConfiguration } from "./Announcement.js";
 import { Base, Serialize } from "./Base.js";
 import { Endpoint, EndpointConfiguration } from "./Endpoint.js";
@@ -16,7 +16,7 @@ import { Web, WebConfiguration } from "./Web.js";
 export type ConfigurationConfiguration = {
     metrics?: boolean;
     storage?: Storage;
-    alerting?: Alerting[];
+    alerting?: Record<string, unknown>;
     announcements?: Announcement[];
     endpoints?: Endpoint[];
     externalEndpoints?: ExternalEndpoint[];
@@ -125,26 +125,8 @@ export class Configuration extends Base implements Serialize {
         return this;
     }
 
-    alert(
-        base: AlertingConfiguration,
-        alert?: (alert: Alerting) => Alerting
-    ): this;
-    alert(alert: (alert: Alerting) => Alerting): this;
-    alert(
-        baseOrAlert: AlertingConfiguration | ((alert: Alerting) => Alerting),
-        alert?: (alert: Alerting) => Alerting
-    ): this {
-        let alertInstance: Alerting;
-        if (typeof baseOrAlert === "function") {
-            alertInstance = baseOrAlert(new Alerting({}));
-        } else {
-            alertInstance = new Alerting(baseOrAlert);
-            if (alert) alertInstance = alert(alertInstance);
-        }
-        if (!this.data.alerting) {
-            this.data.alerting = [];
-        }
-        this.data.alerting.push(alertInstance);
+    alerting(base: Record<string, unknown>): this {
+        this.data.alerting = base;
         return this;
     }
 
@@ -281,12 +263,6 @@ export class Configuration extends Base implements Serialize {
 
     serialize(): Record<string, any> {
         let output: Record<string, any> = { ...this.data };
-
-        if (this.data.alerting) {
-            output.alerting = this.data.alerting.map((alert) =>
-                alert.serialize()
-            );
-        }
 
         if (this.data.announcements) {
             output.announcements = this.data.announcements.map((announcement) =>

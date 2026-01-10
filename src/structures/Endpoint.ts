@@ -1,4 +1,4 @@
-import { Alerting, AlertingConfiguration } from "./Alerting.js";
+import { Alerting, EndpointAlertingConfiguration } from "./Alerting.js";
 import { Base, Serialize } from "./Base.js";
 import { Client, ClientConfiguration } from "./Client.js";
 import { Maintenance, MaintenanceConfiguration } from "./Maintenance.js";
@@ -185,7 +185,7 @@ export class Endpoint extends Base implements Serialize {
     }
 
     alert(
-        base: AlertingConfiguration,
+        base: EndpointAlertingConfiguration,
         cb?: (alert: Alerting) => Alerting
     ): this {
         if (!this.data.alerts) {

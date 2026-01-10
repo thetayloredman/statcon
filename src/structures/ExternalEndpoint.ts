@@ -1,4 +1,4 @@
-import { Alerting, AlertingConfiguration } from "./Alerting.js";
+import { Alerting, EndpointAlertingConfiguration } from "./Alerting.js";
 import { Base, Serialize } from "./Base.js";
 
 export type ExternalEndpointConfiguration = {
@@ -41,7 +41,7 @@ export class ExternalEndpoint extends Base implements Serialize {
     }
 
     alert(
-        base: AlertingConfiguration,
+        base: EndpointAlertingConfiguration,
         alert?: (alert: Alerting) => Alerting
     ): this {
         if (!this.data.alerts) {
