@@ -13,7 +13,7 @@ const createStandardHttpEndpoint =
     (name: string, url: string) => (endpoint: sc.Endpoint) =>
         endpoint.name(name).url(url).use(httpDefaults);
 
-const config = sc.statcon((config) =>
+const config = sc.generate((config) => {
     config
         .metrics(true)
         // Object style configuration:
@@ -35,13 +35,27 @@ const config = sc.statcon((config) =>
                 .name("Example Plugin Use")
                 // Invoke plugins...
                 .use(httpDefaults)
-                // ... and even override them if needed!
+                // ... and add your own additional configuration:
                 .url("https://example.com")
         )
         // And even use the above curried function to create a new endpoint with the same defaults:
-        .endpoint(createStandardHttpEndpoint("Google", "https://google.com"))
-);
+        .endpoint(createStandardHttpEndpoint("Google", "https://google.com"));
 
-// All JSON is valid YAML, so you can output the configuration as JSON and Gatus will still
+    // Or, if you prefer an imperative style, you can call the functions without chaining,
+    // including with loops:
+    const endpoints = [
+        { name: "GitHub", url: "https://github.com" },
+        { name: "GitLab", url: "https://gitlab.com" },
+    ];
+    for (const { name, url } of endpoints) {
+        config.endpoint(createStandardHttpEndpoint(name, url));
+    }
+
+    // Just return the configuration object at the end of the function, and it will be serialized
+    // for you:
+    return config;
+});
+
+// And, all JSON is valid YAML, so you can output the configuration as JSON and Gatus will still
 // be able to read it!
 console.log(JSON.stringify(config));
