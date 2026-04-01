@@ -1,4 +1,3 @@
-import { Alerting, EndpointAlertingConfiguration } from "./Alerting.js";
 import { Announcement, AnnouncementConfiguration } from "./Announcement.js";
 import { Base, Serialize } from "./Base.js";
 import { Endpoint, EndpointConfiguration } from "./Endpoint.js";
@@ -7,6 +6,7 @@ import {
     ExternalEndpointConfiguration,
 } from "./ExternalEndpoint.js";
 import { Maintenance, MaintenanceConfiguration } from "./Maintenance.js";
+import { Remote, RemoteConfiguration } from "./Remote.js";
 import { Security, SecurityConfiguration } from "./Security.js";
 import { Storage, StorageConfiguration } from "./Storage.js";
 import { Tunnel, TunnelingConfiguration } from "./Tunnel.js";
@@ -27,6 +27,7 @@ export type ConfigurationConfiguration = {
     ui?: UI;
     maintenance?: Maintenance;
     tunneling?: Record<string, Tunnel>;
+    remotes?: Remote[];
 };
 
 export class Configuration extends Base implements Serialize {
@@ -258,6 +259,29 @@ export class Configuration extends Base implements Serialize {
         return this;
     }
 
+    remote(
+        base: RemoteConfiguration,
+        remote?: (remote: Remote) => Remote
+    ): this;
+    remote(remote: (remote: Remote) => Remote): this;
+    remote(
+        baseOrRemote: RemoteConfiguration | ((remote: Remote) => Remote),
+        remote?: (remote: Remote) => Remote
+    ): this {
+        let remoteInstance: Remote;
+        if (typeof baseOrRemote === "function") {
+            remoteInstance = baseOrRemote(new Remote({}));
+        } else {
+            remoteInstance = new Remote(baseOrRemote);
+            if (remote) remoteInstance = remote(remoteInstance);
+        }
+        if (!this.data.remotes) {
+            this.data.remotes = [];
+        }
+        this.data.remotes.push(remoteInstance);
+        return this;
+    }
+
     serialize(): Record<string, any> {
         let output: Record<string, any> = { ...this.data };
 
@@ -308,6 +332,12 @@ export class Configuration extends Base implements Serialize {
 
         if (this.data.ui) {
             output.ui = this.data.ui.serialize();
+        }
+
+        if (this.data.remotes) {
+            output.remote = {
+                instances: this.data.remotes.map((remote) => remote.serialize())
+            };
         }
 
         return output;
